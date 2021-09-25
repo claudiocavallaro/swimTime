@@ -6,6 +6,8 @@ import org.htmlcleaner.CleanerProperties;
 import org.htmlcleaner.DomSerializer;
 import org.htmlcleaner.TagNode;
 import org.jsoup.Jsoup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 
@@ -20,13 +22,22 @@ import java.util.List;
 @Service
 public class UserService {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserDAO.class);
+
     public String find(String nome){
+        UserDAO dao = UserDAO.getInstance();
+        //controlla se l'untente c'è già nel DB così evitiamo lo scraping
+        List<User> usersFromDb = dao.get(nome);
+        if (usersFromDb.size() > 0){
+            logger.info("From DB");
+            return usersFromDb.toString();
+        }
+
         String url = "https://aquatime.it/tempim.php?AtletaSRC="+ nome +"&Azione=1";
 
         String cookie = "_ga=GA1.2.1127064407.1632581065; _gid=GA1.2.301384308.1632581065; " +
                 "regione=999;";
 
-        UserDAO dao = UserDAO.getInstance();
         List<User> userList = new ArrayList<>();
 
         try {
@@ -77,7 +88,7 @@ public class UserService {
 
 
             userList.stream().forEach(u -> dao.insert(u.getNome(), u.getAnno(), u.getSesso(), u.getSocieta(), u.getCodice()));
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         }

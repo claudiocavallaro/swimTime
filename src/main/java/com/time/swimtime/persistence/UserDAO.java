@@ -1,7 +1,6 @@
 package com.time.swimtime.persistence;
 
 import com.time.swimtime.model.User;
-import org.apache.logging.log4j.spi.LoggerContextFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +17,7 @@ public class UserDAO {
 
     private static final UserDAO INSTANCE = new UserDAO();
 
-    private static final String SELECT_ALL = "select * from db.userdb;";
+    private static final String SELECT_NOME = "select * from db.userdb where nome = ?;";
 
     private static final String INSERT = "insert into db.userdb(nome, anno, sesso, societa, codice) " +
             " values ( ?, ?, ?, ?, ?);";
@@ -49,11 +48,12 @@ public class UserDAO {
         return flag;
     }
 
-    public List<User> get() {
+    public List<User> get(String nome) {
         final List<User> utenti = new ArrayList<>();
         try (final Connection conn = DBManager.createConnection();
-             final PreparedStatement statement = conn.prepareStatement(SELECT_ALL);) {
+             final PreparedStatement statement = conn.prepareStatement(SELECT_NOME);) {
 
+            statement.setString(1, nome);
             statement.execute();
             ResultSet result = statement.getResultSet();
 
