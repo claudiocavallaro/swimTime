@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    local:
+      url: jdbc:postgresql://localhost:5432/db?currentSchema=db
+      user: user
+      password: password
+    docker:
+      url: jdbc:postgresql://db:5432/db?currentSchema=db
+      user: user
+      password: password

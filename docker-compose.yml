@@ -1,0 +1,25 @@
+version: '3.7'
+
+services:
+  app:
+    image: 'demodb:latest'
+    build:
+      context: .
+    container_name: app
+    depends_on:
+      - db
+    ports:
+    - 8080:8080
+
+  db:
+    image: 'postgres:13.1-alpine'
+    container_name: db
+    ports:
+    - 5432:5432
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=db
+      - POSTGRES_SCHEMA=db
+    volumes:
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
