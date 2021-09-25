@@ -6,7 +6,8 @@ CREATE table "db".userdb(
 	anno varchar(255),
 	societa varchar(255),
 	sesso varchar(1),
-	codice varchar(255)
+	codice varchar(255),
+	CONSTRAINT uni UNIQUE(nome, anno, societa, sesso, codice)
 );
 CREATE INDEX USERDB_DB_ID
   ON "db".USERDB (ID);

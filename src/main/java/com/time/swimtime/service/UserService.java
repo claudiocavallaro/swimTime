@@ -1,6 +1,7 @@
 package com.time.swimtime.service;
 
 import com.time.swimtime.model.User;
+import com.time.swimtime.persistence.UserDAO;
 import org.htmlcleaner.CleanerProperties;
 import org.htmlcleaner.DomSerializer;
 import org.htmlcleaner.TagNode;
@@ -12,6 +13,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +26,7 @@ public class UserService {
         String cookie = "_ga=GA1.2.1127064407.1632581065; _gid=GA1.2.301384308.1632581065; " +
                 "regione=999;";
 
+        UserDAO dao = UserDAO.getInstance();
         List<User> userList = new ArrayList<>();
 
         try {
@@ -73,6 +76,8 @@ public class UserService {
             }
 
 
+            userList.stream().forEach(u -> dao.insert(u.getNome(), u.getAnno(), u.getSesso(), u.getSocieta(), u.getCodice()));
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
