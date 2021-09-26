@@ -85,7 +85,7 @@ public class UserService {
 
                     String expressionLink = "(//div[1]/center[5]/table[@class='datatable']/tbody/tr[" + i + "]/td[1]/a/@href)[1]";
                     XPathExpression exprLink = xpath.compile(expressionLink);
-                    String link = exprLink.evaluate(doc).replaceAll("amp;", "");
+                    String link = exprLink.evaluate(doc).replaceAll("amp;", "").split("&")[0];
                     a.setCodice(link);
 
                     userList.add(a);
@@ -104,9 +104,11 @@ public class UserService {
     }
 
     @Cacheable("time")
-    public String findTime(String url) {
+    public String findTime(String id) {
         Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
         List<Gara> lista = new ArrayList<>();
+        UserDAO dao = UserDAO.getInstance();
+        String url = dao.getCodice("1");
         scansionaPagine(lista, url, "1");
         scansionaPagine(lista, url, "2");
         scansionaPagine(lista, url, "3");

@@ -18,6 +18,7 @@ public class UserDAO {
     private static final UserDAO INSTANCE = new UserDAO();
 
     private static final String SELECT_NOME = "select * from db.userdb where nome = ?;";
+    private static final String SELECT_CODICE = "select codice from db.userdb where id = ?;";
 
     private static final String INSERT = "insert into db.userdb(nome, anno, sesso, societa, codice) " +
             " values ( ?, ?, ?, ?, ?);";
@@ -46,6 +47,24 @@ public class UserDAO {
             flag = false;
         }
         return flag;
+    }
+
+    public String getCodice(String id){
+        String codice = "";
+        try (final Connection conn = DBManager.createConnection();
+             final PreparedStatement statement = conn.prepareStatement(SELECT_CODICE);) {
+            statement.setLong(1, Long.parseLong(id));
+            statement.execute();
+
+            ResultSet resultSet = statement.getResultSet();
+            while (resultSet.next()){
+                codice = resultSet.getString("codice");
+            }
+        } catch (Exception e){
+            logger.info("Id inesistente");
+            return "";
+        }
+        return codice;
     }
 
     public List<User> get(String nome) {
