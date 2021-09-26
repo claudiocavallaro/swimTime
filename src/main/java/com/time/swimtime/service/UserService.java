@@ -100,7 +100,9 @@ public class UserService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return gson.toJson(userList);
+
+        usersFromDb = dao.get(nome);
+        return gson.toJson(usersFromDb);
     }
 
     @Cacheable("time")
