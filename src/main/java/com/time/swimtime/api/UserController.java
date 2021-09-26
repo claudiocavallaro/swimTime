@@ -12,8 +12,15 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/find")
-    public String findAll(@RequestParam String nome) {
+    @GetMapping("/findUser")
+    public String findUser(@RequestParam String nome) {
         return userService.find(nome);
     }
+
+
+    @GetMapping("/findTime")
+    public String findTime(@RequestParam String url) {
+        return userService.findTime(url);
+    }
+
 }
