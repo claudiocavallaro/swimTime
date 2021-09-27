@@ -110,7 +110,7 @@ public class UserService {
         Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
         List<Gara> lista = new ArrayList<>();
         UserDAO dao = UserDAO.getInstance();
-        String url = dao.getCodice("1");
+        String url = dao.getCodice(id);
         scansionaPagine(lista, url, "1");
         scansionaPagine(lista, url, "2");
         scansionaPagine(lista, url, "3");

@@ -19,8 +19,8 @@ public class UserController {
 
 
     @GetMapping("/findTime")
-    public String findTime(@RequestParam String url) {
-        return userService.findTime(url);
+    public String findTime(@RequestParam String id) {
+        return userService.findTime(id);
     }
 
 }
