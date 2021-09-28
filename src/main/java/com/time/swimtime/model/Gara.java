@@ -1,16 +1,43 @@
 package com.time.swimtime.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 
 public class Gara {
 
+    private long id;
+
+    @JsonProperty("data")
     private String data;
+
+    @JsonProperty("tipo")
     private String tipo;
+
+    @JsonProperty("tempo")
     private String tempo;
+
+    @JsonProperty("vasca")
     private String vasca;
+
+    @JsonProperty("federazione")
     private String federazione;
+
+    @JsonProperty("categoria")
     private String categoria;
+
+    @JsonProperty("userId")
+    private long userId;
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
     private User user;
     private long time;
     private String citta;
@@ -117,5 +144,13 @@ public class Gara {
         long totL = minL+ secL + milliL;
 
         return totL;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.time.swimtime.model.Gara;
 import com.time.swimtime.model.User;
+import com.time.swimtime.persistence.GareDAO;
 import com.time.swimtime.persistence.UserDAO;
 import org.htmlcleaner.CleanerProperties;
 import org.htmlcleaner.DomSerializer;
@@ -41,7 +42,7 @@ public class UserService {
             return gson.toJson(usersFromDb);
         }
 
-        String url = "https://aquatime.it/tempim.php?AtletaSRC=" + nome + "&Azione=1";
+        String url = prefixUrl + "?AtletaSRC=" + nome + "&Azione=1";
 
         String cookie = "_ga=GA1.2.1127064407.1632581065; _gid=GA1.2.301384308.1632581065; " +
                 "regione=999;";
@@ -110,13 +111,25 @@ public class UserService {
         Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
         List<Gara> lista = new ArrayList<>();
         UserDAO dao = UserDAO.getInstance();
+        GareDAO gareDAO = GareDAO.getInstance();
         String url = dao.getCodice(id);
         scansionaPagine(lista, url, "1");
         scansionaPagine(lista, url, "2");
         scansionaPagine(lista, url, "3");
         scansionaPagine(lista, url, "4");
         scansionaPagine(lista, url, "5");
-        return gson.toJson(lista);
+
+        lista.stream().forEach(g -> {
+            g.setUserId(Long.valueOf(id));
+            gareDAO.insert(g.getData(), g.getTipo(), g.getTempo(), g.getVasca(), g.getFederazione(), g.getCategoria(), Long.valueOf(id));
+        });
+
+        List<Gara> listFromDB = gareDAO.get(id);
+
+        listFromDB.stream().forEach(g -> {
+            gareDAO.insertAssociativa(g.getId(), Long.valueOf(id));
+        });
+        return gson.toJson(listFromDB);
     }
 
     private void scansionaPagine(List<Gara> listaGare, String url, String page) {
@@ -181,7 +194,7 @@ public class UserService {
                     } else {
                         if (gara1.getTipo().contains("4x")) {
                             gara1.setTempo("Tempo totale staffetta : " + tempo.substring(tempo.indexOf("gt;") + 3, tempo.length()));
-                            gara1.setTime(gara1.toTime(tempo));
+                            gara1.setTime(gara1.toTime(tempo.substring(tempo.indexOf("gt;") + 3, tempo.length())));
                         } else {
                             String tempoSt = tempo.substring(tempo.indexOf("gt;") + 3, tempo.length());
                             gara1.setTempo(tempoSt);
