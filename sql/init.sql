@@ -17,6 +17,7 @@ CREATE table "db".garedb(
 	data varchar(255),
 	tipo varchar(255),
 	tempo varchar(255),
+	time numeric(19),
 	vasca varchar(255),
 	federazione varchar(255),
     categoria varchar(255),
@@ -40,6 +41,7 @@ owned by "db".garedb.id;
 CREATE table "db".gareuser(
     idgara serial,
     iduser serial,
+    data date,
     constraint gareuserunique UNIQUE(idgara, iduser),
     foreign key (idgara) references "db".garedb(id),
     foreign key (iduser) references "db".userdb(id)

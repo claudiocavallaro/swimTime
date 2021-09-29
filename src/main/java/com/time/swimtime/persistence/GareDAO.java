@@ -20,8 +20,8 @@ public class GareDAO {
 
     private static final String SELECT_BY_ID = "select * from db.garedb where iduser = ?";
 
-    private static final String INSERT = "insert into db.garedb(data, tipo, tempo, vasca, federazione, categoria, iduser) " +
-            " values(?, ?, ?, ?, ?, ?, ?);";
+    private static final String INSERT = "insert into db.garedb(data, tipo, tempo, vasca, federazione, categoria, iduser, time) " +
+            " values(?, ?, ?, ?, ?, ?, ?, ?);";
 
     private static final String INSERT_ASSOCIATIVA = "insert into db.gareuser(idgara, iduser) values (?, ?);";
 
@@ -32,7 +32,7 @@ public class GareDAO {
         return INSTANCE;
     }
 
-    public boolean insert(String data, String tipo, String tempo, String vasca, String federazione, String categoria, Long iduser){
+    public boolean insert(String data, String tipo, String tempo, String vasca, String federazione, String categoria, Long iduser, Long time){
         boolean flag = true;
         try (final Connection conn = DBManager.createConnection();
              final PreparedStatement statement = conn.prepareStatement(INSERT);) {
@@ -44,6 +44,7 @@ public class GareDAO {
             statement.setString(5, federazione);
             statement.setString(6, categoria);
             statement.setLong(7, iduser);
+            statement.setLong(8, time);
             statement.execute();
 
         }catch(SQLException s) {
@@ -88,6 +89,7 @@ public class GareDAO {
                 gara.setFederazione(result.getString("federazione"));
                 gara.setCategoria(result.getString("categoria"));
                 gara.setUserId(result.getLong("iduser"));
+                gara.setTime(result.getLong("time"));
                 gare.add(gara);
             }
         } catch (SQLException s) {

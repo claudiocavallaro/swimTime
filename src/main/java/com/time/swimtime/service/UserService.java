@@ -121,7 +121,7 @@ public class UserService {
 
         lista.stream().forEach(g -> {
             g.setUserId(Long.valueOf(id));
-            gareDAO.insert(g.getData(), g.getTipo(), g.getTempo(), g.getVasca(), g.getFederazione(), g.getCategoria(), Long.valueOf(id));
+            gareDAO.insert(g.getData(), g.getTipo(), g.getTempo(), g.getVasca(), g.getFederazione(), g.getCategoria(), Long.valueOf(id), g.getTime());
         });
 
         List<Gara> listFromDB = gareDAO.get(id);
