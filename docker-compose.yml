@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   app:
-    image: 'demodb:latest'
+    image: 'swimtime:latest'
     build:
       context: .
     container_name: app

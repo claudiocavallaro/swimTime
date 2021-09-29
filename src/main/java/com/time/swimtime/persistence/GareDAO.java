@@ -5,10 +5,7 @@ import com.time.swimtime.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +20,13 @@ public class GareDAO {
     private static final String INSERT = "insert into db.garedb(data, tipo, tempo, vasca, federazione, categoria, iduser, time) " +
             " values(?, ?, ?, ?, ?, ?, ?, ?);";
 
-    private static final String INSERT_ASSOCIATIVA = "insert into db.gareuser(idgara, iduser) values (?, ?);";
+    private static final String INSERT_ASSOCIATIVA = "insert into db.gareuser(idgara, iduser, data) values (?, ?, ?);";
+
+    private static final String SELECT_LAST_DATE = "select data\n" +
+            "from db.gareuser\n" +
+            "where iduser = ? " +
+            "order by data desc \n" +
+            "limit 1";
 
     private GareDAO() {
     }
@@ -61,6 +64,7 @@ public class GareDAO {
 
             statement.setLong(1, idGara);
             statement.setLong(2, idUser);
+            statement.setDate(3, new Date(System.currentTimeMillis()));
             statement.execute();
 
         }catch(SQLException s) {
@@ -97,4 +101,23 @@ public class GareDAO {
         }
         return gare;
     }
+
+    public Date getLastDate(Long idUser){
+        Date date = null;
+        try (final Connection conn = DBManager.createConnection();
+             final PreparedStatement statement = conn.prepareStatement(SELECT_LAST_DATE);) {
+
+            statement.setLong(1, idUser);
+            statement.execute();
+            ResultSet resultSet = statement.getResultSet();
+            while (resultSet.next()){
+                date = resultSet.getDate("data");
+            }
+
+        }catch(SQLException s) {
+            logger.info("Errore tabella associativa");
+        }
+        return date;
+    }
+
 }

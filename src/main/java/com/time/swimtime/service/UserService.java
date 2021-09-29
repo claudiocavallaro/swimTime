@@ -19,8 +19,8 @@ import org.w3c.dom.Document;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
-import java.io.IOException;
-import java.sql.SQLException;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,6 +110,29 @@ public class UserService {
     public String findTime(String id) {
         Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
         List<Gara> lista = new ArrayList<>();
+        GareDAO gareDAO = GareDAO.getInstance();
+        List<Gara> listFromDB = gareDAO.get(id);
+
+        if (listFromDB.isEmpty()){
+            scansionaPagine(lista, id);
+        } else {
+            LocalDate dataGare = gareDAO.getLastDate(Long.valueOf(id)).toLocalDate();
+            LocalDate oggi = new Date(System.currentTimeMillis()).toLocalDate();
+            if (oggi.minusWeeks(1).isAfter(dataGare)){
+                scansionaPagine(lista, id);
+            }
+        }
+
+        listFromDB = gareDAO.get(id);
+
+        listFromDB.stream().forEach(g -> {
+            gareDAO.insertAssociativa(g.getId(), Long.valueOf(id));
+        });
+        System.out.println(listFromDB.size());
+        return gson.toJson(listFromDB);
+    }
+
+    private void scansionaPagine(List<Gara> lista, String id) {
         UserDAO dao = UserDAO.getInstance();
         GareDAO gareDAO = GareDAO.getInstance();
         String url = dao.getCodice(id);
@@ -123,13 +146,6 @@ public class UserService {
             g.setUserId(Long.valueOf(id));
             gareDAO.insert(g.getData(), g.getTipo(), g.getTempo(), g.getVasca(), g.getFederazione(), g.getCategoria(), Long.valueOf(id), g.getTime());
         });
-
-        List<Gara> listFromDB = gareDAO.get(id);
-
-        listFromDB.stream().forEach(g -> {
-            gareDAO.insertAssociativa(g.getId(), Long.valueOf(id));
-        });
-        return gson.toJson(listFromDB);
     }
 
     private void scansionaPagine(List<Gara> listaGare, String url, String page) {
