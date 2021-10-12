@@ -62,7 +62,7 @@ public class UserService {
                 XPathExpression exprNome = xpath.compile(expressionNome);
                 nomeAtleta = exprNome.evaluate(doc);
                 // se non ci sono più atleti e quindi la xpath torna nulla esci dal ciclo altrimenti prosegui
-                if (!(nomeAtleta.equals(""))) {
+                if (!nomeAtleta.isEmpty() && !nomeAtleta.contains("/")) {
                     User a = new User();
                     a.setNome(nome);
 
